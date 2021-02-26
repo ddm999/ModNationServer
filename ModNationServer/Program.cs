@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,14 +41,8 @@ namespace ModNationServer
 
         static void Main(string[] args)
         {
-            ReadConfigFile("config.ini");
+            LoadConfig();
             DatabaseManager.connectionString = "Data Source=" + config["database"] + ";Version=3;";
-            ip = config["ip"];
-            port = int.Parse(config["port"]);
-            matchingIp = config["directory_ip"];
-            matchingPort = int.Parse(config["directory_port"]);
-            printSqlQueries = bool.Parse(config["print_sql_queries"]);
-            printSqlScripts = bool.Parse(config["print_sql_scripts"]);
             foreach (string arg in args)
             {
                 switch (arg)
@@ -86,6 +80,10 @@ namespace ModNationServer
                     case "reloadsqlscripts":
                         Processors.sqlScripts.Clear();
                         LoadSqlScripts();
+                        break;
+                    case "reloadconfig":
+                        config.Clear();
+                        LoadConfig();
                         break;
                 }
             }
@@ -127,6 +125,18 @@ namespace ModNationServer
                     new Thread(() => Processors.DirectoryServerProcessor(client, serverCertificate)).Start();
                 } catch { }
             }
+        }
+
+        //Load config file
+        static void LoadConfig()
+        {
+            ReadConfigFile("config.ini");
+            ip = config["ip"];
+            port = int.Parse(config["port"]);
+            matchingIp = config["directory_ip"];
+            matchingPort = int.Parse(config["directory_port"]);
+            printSqlQueries = bool.Parse(config["print_sql_queries"]);
+            printSqlScripts = bool.Parse(config["print_sql_scripts"]);
         }
 
         //Caches schemas into memory
