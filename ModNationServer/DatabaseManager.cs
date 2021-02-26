@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -110,7 +110,7 @@ namespace ModNationServer
             catch { }
             try
             {
-                sqlite_cmd.CommandText = "CREATE TABLE Player_Creation_Ratings(id int, player_id bigint, rating real, comments varchar);";
+                sqlite_cmd.CommandText = "CREATE TABLE Player_Creation_Ratings(id int, player_id bigint, rating real, comments varchar, PRIMARY KEY(id, player_id));";
                 sqlite_cmd.ExecuteNonQuery();
             }
             catch { }

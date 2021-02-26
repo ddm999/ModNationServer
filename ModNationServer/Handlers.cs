@@ -616,7 +616,7 @@ namespace ModNationServer
         public static bool PlayerCreationRatingCreateHandler(HttpListenerRequest request, HttpListenerResponse response, Dictionary<string, string> url, XmlDocument resDoc, SQLiteCommand sqlite_cmd)
         {
             XmlElement res = resDoc.CreateElement("response");
-            DatabaseManager.NonQuery(sqlite_cmd, "INSERT INTO Player_Creation_Ratings VALUES (@id,@player_id,@rating,@comments)"
+            DatabaseManager.NonQuery(sqlite_cmd, Processors.sqlScripts["PlayerCreationRatingCreate.sql"]
                 , new SQLiteParameter("@id", url["player_creation_rating[player_creation_id]"])
                 , new SQLiteParameter("@player_id", SessionManager.players[SessionManager.GetSessionID(request.Cookies["playerconnect_session_id"].Value)].player_id.ToString())
                 , new SQLiteParameter("@rating", url["player_creation_rating[rating]"])
