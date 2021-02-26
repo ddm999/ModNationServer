@@ -18,8 +18,9 @@ namespace ModNationServer
 {
     static class Processors
     {
-        //List of xml schema files so were not constantly reading from disk for each request
-        public static Dictionary<string,  byte[]> xmlSchemas = new Dictionary<string, byte[]>();
+        //List of xml schema, sqlite script files so we're not constantly reading from disk for each request
+        public static Dictionary<string, byte[]> xmlSchemas = new Dictionary<string, byte[]>();
+        public static Dictionary<string, string> sqlScripts = new Dictionary<string, string>();
 
         public static void MainServerProcessor(HttpListenerContext context)
         {

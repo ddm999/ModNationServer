@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
 using System.Data.SQLite;
+using Newtonsoft.Json;
 
 namespace ModNationServer
 {
@@ -35,6 +36,8 @@ namespace ModNationServer
         public static int port = 10050;
         public static string matchingIp = "127.0.0.1";
         public static int matchingPort = 10501;
+        public static bool printSqlQueries = false;
+        public static bool printSqlScripts = false;
 
         static void Main(string[] args)
         {
@@ -44,6 +47,8 @@ namespace ModNationServer
             port = int.Parse(config["port"]);
             matchingIp = config["directory_ip"];
             matchingPort = int.Parse(config["directory_port"]);
+            printSqlQueries = bool.Parse(config["print_sql_queries"]);
+            printSqlScripts = bool.Parse(config["print_sql_scripts"]);
             foreach (string arg in args)
             {
                 switch (arg)
@@ -54,6 +59,7 @@ namespace ModNationServer
                 }
             }
             LoadSchemas();
+            LoadSqlScripts();
             ServerValues.Init();
             if (!File.Exists("database.sqlite"))
             {
@@ -76,6 +82,10 @@ namespace ModNationServer
                     case "reloadschemas":
                         Processors.xmlSchemas.Clear();
                         LoadSchemas();
+                        break;
+                    case "reloadsqlscripts":
+                        Processors.sqlScripts.Clear();
+                        LoadSqlScripts();
                         break;
                 }
             }
@@ -130,6 +140,21 @@ namespace ModNationServer
             }
         }
 
+        //Caches SQL scripts into memory
+        static void LoadSqlScripts()
+        {
+            Console.WriteLine("Loading sql scripts");
+            foreach (string file in Directory.GetFiles("sqlscripts"))
+            {
+                Console.WriteLine("Loaded {0}", "sqlscripts\\" + Path.GetFileName(file));
+                Processors.sqlScripts.Add(Path.GetFileName(file), File.ReadAllText(file));
+            }
+            if (printSqlScripts)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(Processors.sqlScripts));
+            }
+        }
+
         //Checks and updates statistics
         static void StaticticThread()
         {
@@ -168,6 +193,8 @@ namespace ModNationServer
                     + "content_update_url=http://127.0.0.1:10050/content_updates/\r\n"
                     + "ghost_car_data_url=http://127.0.0.1:10050/ghost_car_data/\r\n"
                     + "database=database.sqlite\n"
+                    + "print_sql_queries=false\n"
+                    + "print_sql_scripts=false\n"
                     + "hide_eula=false");
             }
             string[] parameters = File.ReadAllLines(file);

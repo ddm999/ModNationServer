@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,10 @@ namespace ModNationServer
             {
                 sqlite_cmd.Parameters.Add(param);
             }
-            //Console.WriteLine(sqlite_cmd.CommandText);
+            if (Program.printSqlQueries)
+            {
+                Console.WriteLine(sqlite_cmd.CommandText);
+            }
             SQLiteDataReader sqReader = sqlite_cmd.ExecuteReader();
             sqReader.Read();
             return sqReader;
